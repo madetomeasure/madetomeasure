@@ -1,4 +1,4 @@
-(ns madetomeasure-api.test.handler
+(ns madetomeasure-api.test.routes.handler
   (:use clojure.test
         ring.mock.request
         madetomeasure-api.handler))

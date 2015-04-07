@@ -1,0 +1,90 @@
+#%RAML 0.8
+title: Email
+version: 1
+baseUri: https://{environment}z.com/api/{domain}
+mediaType: application/json
+protocols: [ HTTPS ]
+baseUriParameters:
+  domain:
+    displayName: "A unique domain for each customer"
+    type: string
+    example: "theclymb.com"
+  environment:
+    displayName: "Whether you're testing or not"
+    type: string
+    enum: ['', 'test.']
+resourceTypes: !include types.raml
+traits:
+  - paged: !include paged.raml
+  - thrifty: !include thrifty.raml
+  - rateLimited: !include rateLimited.raml
+  - secured: !include secured.raml
+  - batchable: 
+      description: |
+        This defines the ability to batch load data instead of only posting one object at a time
+  - searchable:
+      description: |
+        Defines the ability to search through a given collection endpoint
+      queryParameters:
+        q:
+          type: string
+          example: "firstname=Bob&lastname=Derphouse"
+          description: |
+            Query string using lucene syntax
+  - reportable:
+      description: |
+        Allows you to download big data dumps using .csv .gz
+      body:
+        application/json: !!null
+        text/csv: !!null
+        application/gzip: !!null
+        application/xml: !!null
+      responses:
+        202:
+          description: |
+            The request has been accepted but it is too big to return right away. Either ping same endpoint or wait for callback you have defined
+        304:
+          description: |
+            The request is fulfilled and will be redirected to where it is.
+
+
+/subscribers:
+  is: [ secured, thrifty, paged, rateLimited, batchable, searchable ]
+  type:
+    collection
+  /{subscriberId}:
+    type:
+      member
+/campaigns:
+  is: [ secured, paged, rateLimited ]
+  type:
+    collection
+  /{campaignId}:
+    type:
+      member
+    /subscribers:
+      is: [ reportable, searchable ]
+      type:
+        collection
+      /{subscriberId}:
+        delete:
+          description: "Unsubscribe from the campaign"
+/lists:
+  is: [ secured, paged, rateLimited ]
+  type:
+    collection
+  /{listId}:
+    type:
+      member
+    /campaigns:
+      type:
+        collection
+    /subscribers:
+      /{subscriberId}:
+        get:
+          description: Return relevant information about user under given list
+        post:
+          description: "Subscribe <<subscriberId> to list <<listId>>"
+        delete:
+          description: "Unsubscribe <<subscriberId>> from <<listId>>"
+

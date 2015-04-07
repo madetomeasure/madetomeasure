@@ -1,0 +1,16 @@
+#%RAML 0.8
+queryParameters:
+  size:
+    description: Indicates the number of results that should be returned
+    type: integer
+    required: false
+    default: 10
+    minimum: 1
+    maximum: 1000
+    example: 30
+  from:
+    description: Indicates the number of initial results that should be skipped
+    type: integer
+    required: false
+    default: 0
+    minimum: 0

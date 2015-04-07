@@ -1,0 +1,38 @@
+#%RAML 0.8
+- collection:
+    usage: This resourceType should be used for any collection of items
+    description: The collection of <<resourcePathName>>
+    get:
+      description: Get all <<resourcePathName>>, optionally filtered
+    post:
+      description: Create a new <<resourcePathName | !singularize>>
+- member:
+    usage: this resourceType should be use for a single item that isn't paranoid (i.e. delete forever)
+    description: The member of <<resourcePathName>>
+    get:
+      description: Get <<resourcePathName>>
+      responses:
+        200:
+          body:
+            schema: <<resourcePathName>> # e.g. user
+        404:
+          body:
+            example: "Does not exist"
+    delete:
+      description: Delete <<resourcePathName>>
+      responses:
+        200:
+          body:
+            schema: <<resourcePathName>>
+    patch:
+      description: Update <<resourcePathName>>
+      responses:
+        200:
+          body:
+            schema: <<resourcePathName>>
+    post:
+      description: Update <<resourcePathName>>
+      responses:
+        200:
+          body:
+            schema: <<resourcePathName>>

@@ -1,0 +1,10 @@
+#%RAML 0.8
+description: According to Datensparsamkeit it is important to only show the data that you want and to ignore PII or personally identifying information. This defines the thriftiness of certain calls that expose PII.
+usage: Apply this to any method that should be thrifty and avoid yielding too much PII.
+queryParameters:
+  thrifty:
+    description: Determines whether the endpoint should be thrifty or not. Thrifty means only return what isn't personally identifiable.
+    type: boolean
+    example: true
+    default: true
+    required: false

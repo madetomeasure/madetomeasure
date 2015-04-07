@@ -8,5 +8,4 @@
     "home.html" {:docs (-> "docs/docs.md" io/resource slurp)}))
 
 (defroutes home-routes
-  (GET "/" [] (home-page))
-  (GET "/about" [] (about-page)))
+  (GET "/" [] (home-page)))

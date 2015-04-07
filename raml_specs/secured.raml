@@ -1,0 +1,6 @@
+#%RAML 0.8
+description: Some requests require authentication
+<<methodName>>: # e.g. get:
+  securedBy: [ basic_authentication ]
+  description: A <<methodName>> name-value pair must be provided for this request to succeed. Read https://github.com/cryptosphere/rbnacl/wiki/Public-Key-Encryption
+  example: bob@derp.com:d5f469e298e5a569f31d6919b95c586700868be69c1a9d1cdc05e18a1c37a230

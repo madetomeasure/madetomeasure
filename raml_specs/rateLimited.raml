@@ -1,0 +1,43 @@
+#%RAML 0.8
+# http://william.holroyd.name/2014/11/02/how-do-most-apis-handle-rate-limiting/
+responses:
+  403:
+    description: |
+      The service is unavailable or you have exceeded the maximum alloted requests per hour for your application.
+    headers:
+      X-RateLimit-Used:
+        displayName: The limit that you cannot surpass in a given amount of time
+        type: integer
+        required: true
+        minimum: 1
+        maximum: 3600
+        example: 3600
+      X-RateLimit-Remaining:
+        displayName: The number of calls you have available until a given reset time stamp, or calculated given some sort of sliding time window.
+        type: integer
+        required: true
+        minimum: 1
+        maximum: 3599
+        example: 0
+      X-RateLimit-Reset: &RateLimitReset
+        displayName: The timestamp in UTC formatted to HTTP spec per RFC 1123 for when the limits will be reset.
+        type: date
+        required: true
+        example: Sun, 06 Nov 1994 08:49:37 GMT
+  200:
+    headers:
+      X-RateLimit-Used:
+        displayName: The limit that you cannot surpass in a given amount of time
+        type: integer
+        required: true
+        minimum: 1
+        maximum: 3600
+        example: 39
+      X-RateLimit-Remaining:
+        displayName: The number of calls you have available until a given reset time stamp, or calculated given some sort of sliding time window.
+        type: integer
+        required: true
+        minimum: 1
+        maximum: 3599
+        example: 3561
+      X-RateLimit-Reset: *RateLimitReset
