@@ -1,6 +1,11 @@
 CREATE TABLE subscribers(
   id serial primary key,
   address varchar(255) not null,
-  created_at timestamp without time zone,
-  updated_at timestamp without time zone
-)
+  first_name varchar(255),
+  last_name varchar(255),
+  created_at timestamp without time zone not null,
+  updated_at timestamp without time zone not null
+);
+
+CREATE INDEX subscribers_address_idx ON subscribers (address);
+CREATE INDEX subscribers_updated_at_idx ON subscribers (updated_at);
