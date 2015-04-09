@@ -37,3 +37,6 @@ If you get lost type `lein help` Usually it'll have what you need
 ## License
 
 The Made to Measure API is AGPL see License.txt
+
+Copyright 2015 Made to Measure
+
