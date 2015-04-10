@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Subscriber Object",
+  "type": "object",
+  "required": [ "address" ],
+  "additionalProperties": false,
+  "properties": {
+    "address": {
+      "type": "string",
+      "pattern": "@"
+    },
+    "first_name": { "type": "string" },
+    "last_name": {"type": "string" }
+  }
+}
