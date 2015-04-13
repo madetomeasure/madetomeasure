@@ -49,7 +49,7 @@
             :ragtime
             {:migrations ragtime.sql.files/migrations
              :database
-             "jdbc:postgresql://localhost/madetomeasure_development?user=matthewkirk"}
+             (env :database-url)}
 
 
 
