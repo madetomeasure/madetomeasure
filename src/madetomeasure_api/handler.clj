@@ -2,7 +2,7 @@
   (:require [compojure.core :refer [defroutes routes]]
             [madetomeasure-api.routes.home :refer [home-routes]]
             [madetomeasure-api.routes.campaigns :refer [campaign-routes]]
-            [madetomeasure-api.routes.subscribers :refer [subscriber-routes]]
+            [madetomeasure-api.routes.subscribers :refer [validated-subscriber-routes unvalidated-subscriber-routes]]
             [madetomeasure-api.middleware
              :refer [development-middleware production-middleware]]
             [madetomeasure-api.session :as session]
@@ -53,7 +53,8 @@
   (-> (routes
         home-routes
         campaign-routes
-        subscriber-routes
+        validated-subscriber-routes
+        unvalidated-subscriber-routes
         base-routes)
       development-middleware
       production-middleware))

@@ -1,9 +1,3 @@
---name: create-user!
--- creates a new user record
-INSERT INTO users
-(id, first_name, last_name, email, pass)
-VALUES (:id, :first_name, :last_name, :email, :pass)
-
 --name: update-user!
 -- update an existing user record
 UPDATE users
@@ -14,3 +8,9 @@ WHERE id = :id
 -- retrieve a used given the id.
 SELECT * FROM users
 WHERE id = :id
+
+--name: create-subscriber!
+-- creates a new subscriber
+INSERT INTO subscribers
+(address, first_name, last_name)
+VALUES (:address, :first_name, :last_name);

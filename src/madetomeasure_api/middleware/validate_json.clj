@@ -58,12 +58,17 @@
        :message (jsend-fail-response report parsed-data)})
     (catch JsonMappingException e {:success false :message (jsend-error-response e data)})))
 
+(defn- err-handler [validation]
+  (fn [req]
+    {:status 400 :headers {"Content-Type" "application/json"} :body (:message validation)}))
+
 (defn json-schema-validate [schema-name]
   (fn [handler]
     (fn [request]
-    (let [body (:body request)
-          response (handler request)
-          validation (validate schema-name body)]
-      (if (= (:success validation) false)
-        (assoc (assoc response :status 400) :body (:message validation))
-        response)))))
+      (let [body (:body request)
+            validation (validate schema-name body)
+            valid? (:success validation)
+            errback (err-handler validation)
+            h (if (not valid?) errback handler)
+            response (h request)]
+        response))))
