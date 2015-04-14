@@ -3,6 +3,7 @@
             [madetomeasure-api.db.core :as db]
             [cheshire.core :refer :all]
             [compojure.core :refer [defroutes GET POST DELETE PATCH]]
+            [madetomeasure-api.middleware.present-response :refer :all :as present-response]
             [madetomeasure-api.middleware.validate-json :refer [json-schema-validate]])
   (:import java.sql.SQLException))
 
@@ -16,12 +17,6 @@
 (defn- extract-subscriber [request]
   (merge default-subscriber-map (subscriber-params request)))
 
-(defn- jsend-success-response [subscriber]
-  (generate-string {:status "success" :data subscriber}))
-
-(defn- jsend-error-response [subscriber message]
-  {:status 406, :body (generate-string {:status "error" :data subscriber :message message})})
-
 (defn get-subscribers []
   (str "Not implemented"))
 
@@ -29,11 +24,11 @@
   (let [subscriber (extract-subscriber request)]
     (try
       (db/create-subscriber! subscriber)
-      (jsend-success-response subscriber)
+      (present-response/success subscriber)
     (catch SQLException e 
       (let [pretty-print (fn [e] (.getMessage e))
             exceptions (map pretty-print e)]
-        (jsend-error-response subscriber exceptions))))))
+        (present-response/fail exceptions (:params request)))))))
 
 (defn get-subscriber [id]
   (str "Id: " id))

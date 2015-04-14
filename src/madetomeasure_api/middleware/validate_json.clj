@@ -1,6 +1,7 @@
 (ns madetomeasure-api.middleware.validate-json
   (:require [clojure.java.io :as io]
-            [cheshire.core :refer :all])
+            [cheshire.core :refer :all]
+            [madetomeasure-api.middleware.present-response :as present-response :refer :all])
   (:import (com.github.fge.jsonschema.main JsonSchemaFactory JsonSchema)
            (com.fasterxml.jackson.databind ObjectMapper JsonMappingException)))
 
@@ -29,19 +30,7 @@
   "Get the schema file's contents in form of a string. Function only expects
   the schema name, i.e. 'collection' or 'image'."
   [schema-name]
-  (println (str "raml_specs/schemas/" schema-name ".json"))
   (slurp (io/resource (str "madetomeasure_api/raml_specs/schemas/" schema-name ".json"))))
-
-(defn- jsend-fail-response
-  "This returns a fail response for the given validation"
-  [schema-report parsed-data]
-  (generate-string {:status "fail" :data (parse-string (str parsed-data)) :message (map (fn [r] (parse-string (str (.asJson r)))) schema-report)}))
-
-(defn- jsend-error-response
-  "This returns notification that the JSON is malformed somehow"
-  [json-mapping-exception body]
-  (generate-string {:status "error" :data (.read body) :message (.getMessage json-mapping-exception)}))
-
 
 (defn- validate
   "Validates the given 'data' against the JSON schema. Returns an object
@@ -54,13 +43,15 @@
           schema (.getJsonSchema json-schema-factory parsed-schema)
           parsed-data (parse-to-node data)
           report (.validate schema parsed-data)]
-      {:success (.isSuccess report)
-       :message (jsend-fail-response report parsed-data)})
-    (catch JsonMappingException e {:success false :message (jsend-error-response e data)})))
+      {:success (.isSuccess report) :error false :message (map (fn [r] (parse-string (str (.asJson r)))) report)})
+    (catch JsonMappingException e ({:success false :error true :message (.getMessage e)}))))
 
-(defn- err-handler [validation]
+(defn- err-handler [validation data]
   (fn [req]
-    {:status 400 :headers {"Content-Type" "application/json"} :body (:message validation)}))
+    (let [response  (if (:error validation)
+                      (present-response/error data (:message validation))
+                      (present-response/fail data (:message validation)))]
+    {:status 400 :headers {"Content-Type" "application/json"} :body response})))
 
 (defn json-schema-validate [schema-name]
   (fn [handler]
@@ -68,7 +59,8 @@
       (let [body (:body request)
             validation (validate schema-name body)
             valid? (:success validation)
-            errback (err-handler validation)
+            data (:params request)
+            errback (err-handler validation data)
             h (if (not valid?) errback handler)
             response (h request)]
         response))))
