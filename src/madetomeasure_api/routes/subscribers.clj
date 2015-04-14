@@ -12,20 +12,25 @@
   {:first_name nil :last_name nil})
 
 (defn- subscriber-params [request]
-  (:params request))
+  (let [params (:params request)
+        body (:body request)]
+    (.reset body)
+    (if (empty? params)
+                         (parse-string (slurp body))
+                         [params])))
 
-(defn- extract-subscriber [request]
-  (merge default-subscriber-map (subscriber-params request)))
+(defn- extract-subscribers [request]
+  (let [subscribers (subscriber-params request)]
+    (map (fn [m] merge default-subscriber-map m) subscribers)))
 
 (defn get-subscribers []
   (str "Not implemented"))
 
-
 (defn create-subscribers [request]
-  (let [subscriber (extract-subscriber request)]
+  (let [subscribers (extract-subscribers request)]
     (try
-      (db/create-subscriber! subscriber)
-      (present-response/success subscriber)
+      (apply clojure.java.jdbc/insert! db/db-spec :subscribers subscribers)
+      (present-response/success subscribers)
     (catch SQLException e 
       (let [pretty-print (fn [e] (.getMessage e))
             exceptions (map pretty-print e)]

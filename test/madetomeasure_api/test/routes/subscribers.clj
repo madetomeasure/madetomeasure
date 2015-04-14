@@ -13,10 +13,15 @@
 
 (deftest subscribers
          (testing "creation"
-                  (let [mock-subscriber (generate-string {:address "flap@flap.com"})
+                  (let [subscribers '({:address "flap@flap.com"} {:address "flap@gums.com"})
+                        mock-subscriber (generate-string (first subscribers))
+                        bulk-subscribers (generate-string subscribers)
                         bad-request (generate-string {:flap "blap"})]
                     (testing "valid subscriber post"
                              (let [response (app (json-post "/subscribers" mock-subscriber))]
+                               (is (= 200 (:status response)))))
+                    (testing "bulk subscriber post"
+                             (let [response (app (json-post "/subscribers" bulk-subscribers))]
                                (is (= 200 (:status response)))))
                     (testing "error subscriber post"
                             (let [response (app (json-post "/subscribers" ""))]
