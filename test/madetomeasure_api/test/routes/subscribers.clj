@@ -5,11 +5,11 @@
         ring.mock.request
         madetomeasure-api.handler))
 
-(defn json-post [endpoint body]
+(defn json-post [endpoint body-string]
   (-> 
     (request :post endpoint)
-    (body (.getBytes body "UTF-8"))
-    (header {"Content-Type" "application/json"})))
+    (body body-string)
+    (content-type "application/json")))
 
 (deftest subscribers
          (testing "creation"

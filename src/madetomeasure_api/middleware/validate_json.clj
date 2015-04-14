@@ -44,7 +44,7 @@
           parsed-data (parse-to-node data)
           report (.validate schema parsed-data)]
       {:success (.isSuccess report) :error false :message (map (fn [r] (parse-string (str (.asJson r)))) report)})
-    (catch JsonMappingException e ({:success false :error true :message (.getMessage e)}))))
+    (catch JsonMappingException e {:success false :error true :message (.getMessage e)})))
 
 (defn- err-handler [validation data]
   (fn [req]
@@ -53,14 +53,13 @@
                       (present-response/fail data (:message validation)))]
     {:status 400 :headers {"Content-Type" "application/json"} :body response})))
 
-(defn json-schema-validate [schema-name]
-  (fn [handler]
-    (fn [request]
-      (let [body (:body request)
-            validation (validate schema-name body)
-            valid? (:success validation)
-            data (:params request)
-            errback (err-handler validation data)
-            h (if (not valid?) errback handler)
-            response (h request)]
-        response))))
+(defn json-schema-validate [handler schema-name]
+  (fn [request]
+    (let [body (:body request)
+          validation (validate schema-name body)
+          valid? (:success validation)
+          data (:params request)
+          errback (err-handler validation data)
+          h (if (not valid?) errback handler)
+          response (h request)]
+      response)))

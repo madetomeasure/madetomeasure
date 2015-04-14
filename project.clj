@@ -38,9 +38,6 @@
                       [ragtime/ragtime.lein "0.3.8"]
                       [lein-cljfmt "0.1.10"]]
 
-
-
-
             :ring {:handler madetomeasure-api.handler/app
                    :init    madetomeasure-api.handler/init
                    :destroy madetomeasure-api.handler/destroy
@@ -49,25 +46,4 @@
             :ragtime
             {:migrations ragtime.sql.files/migrations
              :database
-             (env :database-url)}
-
-
-
-
-            :profiles
-            {:uberjar {:omit-source true
-                       :env {:production true}
-
-                       :aot :all}
-             :dev {:dependencies [[ring-mock "0.1.5"]
-                                  [ring/ring-devel "1.3.2"]
-                                  [pjstadig/humane-test-output "0.7.0"]
-                                  ]
-                   :source-paths ["env/dev/clj"]
-
-
-
-                   :repl-options {:init-ns madetomeasure-api.repl}
-                   :injections [(require 'pjstadig.humane-test-output)
-                                (pjstadig.humane-test-output/activate!)]
-                   :env {:dev true}}})
+             (env :database-url)})

@@ -20,6 +20,7 @@
 (defn get-subscribers []
   (str "Not implemented"))
 
+
 (defn create-subscribers [request]
   (let [subscriber (extract-subscriber request)]
     (try
@@ -39,8 +40,12 @@
 (defn update-subscriber [id]
   (str "Id: " id))
 
-(defroutes validated-subscriber-routes*
-           (POST "/subscribers" request (create-subscribers request))
+(defroutes validated-subscriber-routes
+           (POST "/subscribers" _ 
+                 (json-schema-validate 
+                   (fn [req] (create-subscribers req))
+                   "subscriber"
+                   ))
            (PATCH ["/subscribers/:id" :id #"\d+"] [id] (update-subscriber id))
            (POST ["/subscribers/:id" :id #"\d+"] [id] (update-subscriber id)))
 
@@ -48,6 +53,3 @@
            (GET "/subscribers" [] (get-subscribers))
            (GET ["/subscribers/:id" :id #"\d+"] [id] (get-subscriber id))
            (DELETE ["/subscribers/:id" :id #"\d+"] [id] (delete-subscriber id)))
-
-(def validated-subscriber-routes
-  (-> #'validated-subscriber-routes* ((json-schema-validate "subscriber"))))
