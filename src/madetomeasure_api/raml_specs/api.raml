@@ -52,6 +52,14 @@ traits:
   is: [ secured, thrifty, paged, rateLimited, batchable, searchable ]
   type:
     collection
+  get:
+    body:
+      application/json:
+        schema: !include schemas/subscriber.json
+  post:
+    body:
+      application/json:
+        schema: !include schemas/subscriber.json
   /{subscriberId}:
     type:
       member
