@@ -1,20 +1,10 @@
 (ns madetomeasure-api.test.routes.subscribers
-  (:require [madetomeasure-api.db.core :as db])
+  (:require [[madetomeasure-api.db.core :as db]
+             [madetomeasure-api.test.support :refer :all]])
   (:use clojure.test
         cheshire.core
         ring.mock.request
         madetomeasure-api.handler))
-
-(defn json-post [endpoint body-string]
-  (-> 
-    (request :post endpoint)
-    (body body-string)
-    (content-type "application/json")))
-
-(defn json-delete [endpoint]
-  (->
-    (request :delete endpoint)
-    (content-type "application/json")))
 
 (def subscriber
   (first (clojure.java.jdbc/insert! db/db-spec :subscribers {:address "zlap@flap.com"})))
