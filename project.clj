@@ -20,6 +20,8 @@
                  [prone "0.8.1"]
                  [buddy "0.5.0"]
                  [yesql "0.5.0-rc1"]
+                 [com.github.fge/json-schema-validator "2.2.6"]
+                 [cheshire "5.4.0"]
                  [org.postgresql/postgresql "9.3-1102-jdbc41"]]
 
             :min-lein-version "2.0.0"
@@ -42,4 +44,5 @@
          :uberwar-name "madetomeasure-api.war"}
 
   :clj-sql-up {:database "jdbc:postgresql://localhost/madetomeasure_development?user=matthewkirk"
+               :database-test "jdbc:postgresql://localhost/madetomeasure_test?user=matthewkirk"
                :deps [[org.postgresql/postgresql "9.3-1102-jdbc41"]]})
