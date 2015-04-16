@@ -28,9 +28,10 @@
 
 (defn create-subscribers [request]
   (let [subscribers (extract-subscribers request)]
+    ; TODO: Extract this into some sort of try catch for SQL calls
     (try
-      (apply clojure.java.jdbc/insert! db/db-spec :subscribers subscribers)
-      (present-response/success subscribers)
+      (let [insertions (apply clojure.java.jdbc/insert! db/db-spec :subscribers subscribers)]
+        (present-response/success insertions))
     (catch SQLException e 
       (let [pretty-print (fn [e] (.getMessage e))
             exceptions (map pretty-print e)]
@@ -39,8 +40,12 @@
 (defn get-subscriber [id]
   (str "Id: " id))
 
-(defn delete-subscriber [id]
-  (str "Id: " id ))
+(defn delete-subscriber [str-id]
+  (let [id (Integer/parseInt str-id)
+        rows-deleted (db/delete-subscriber! {:id id})]
+    (if (= 0 rows-deleted)
+      {:status 404, :body (present-response/fail {:id str-id} (str "Subscriber not found with id: " str-id))}
+      (present-response/success {:id str-id}))))
 
 (defn update-subscriber [id]
   (str "Id: " id))

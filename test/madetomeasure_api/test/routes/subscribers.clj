@@ -1,15 +1,13 @@
 (ns madetomeasure-api.test.routes.subscribers
-  (:require [madetomeasure-api.db.core :as db])
+  (:require [madetomeasure-api.db.core :as db]
+             [madetomeasure-api.test.support :refer :all])
   (:use clojure.test
         cheshire.core
         ring.mock.request
         madetomeasure-api.handler))
 
-(defn json-post [endpoint body-string]
-  (-> 
-    (request :post endpoint)
-    (body body-string)
-    (content-type "application/json")))
+(def subscriber
+  (first (clojure.java.jdbc/insert! db/db-spec :subscribers {:address "zlap@flap.com"})))
 
 (deftest subscribers
          (testing "creation"
@@ -28,4 +26,12 @@
                               (is (= 400 (:status response)))))
                     (testing "fail subscriber post"
                              (let [response (app (json-post "/subscribers" bad-request))]
-                               (is (= 400 (:status response))))))))
+                               (is (= 400 (:status response)))))))
+         (testing "deletion"
+                  (let [id (:id subscriber)]
+                    (testing "doesnt exist"
+                             (let [response (app (json-delete (str "/subscribers/00")))]
+                               (is (= 404 (:status response)))))
+                    (testing "exists"
+                             (let [response (app (json-delete (str "/subscribers/" id)))]
+                               (is (= 200 (:status response))))))))
