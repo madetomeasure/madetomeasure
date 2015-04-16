@@ -1,6 +1,6 @@
 (ns madetomeasure-api.test.routes.subscribers
-  (:require [[madetomeasure-api.db.core :as db]
-             [madetomeasure-api.test.support :refer :all]])
+  (:require [madetomeasure-api.db.core :as db]
+             [madetomeasure-api.test.support :refer :all])
   (:use clojure.test
         cheshire.core
         ring.mock.request
