@@ -28,6 +28,7 @@
 
 (defn create-subscribers [request]
   (let [subscribers (extract-subscribers request)]
+    ; TODO: Extract this into some sort of try catch for SQL calls
     (try
       (let [insertions (apply clojure.java.jdbc/insert! db/db-spec :subscribers subscribers)]
         (present-response/success insertions))
