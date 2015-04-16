@@ -11,5 +11,3 @@
   (->
     (request :delete endpoint)
     (content-type "application/json")))
-
-
