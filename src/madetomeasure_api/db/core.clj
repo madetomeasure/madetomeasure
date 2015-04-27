@@ -10,7 +10,8 @@
   So this takes the databse-url and returns a given map that can be used
   by Yesql:
   JDBC takes the form of jdbc:vendor//host/dbname?user=name"
-  (let [connection-url (env :database-url)
+  (let [connection-url (or (System/getenv "DATABASE_URL")
+                           (env :database-url))
         parts (str/split connection-url #":")
         subprotocol (nth parts 1)
         subname (nth parts 2)]
