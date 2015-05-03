@@ -7,8 +7,9 @@
         madetomeasure-api.handler))
 
 (def subscriber
+;  (first (clojure.java.jdbc/insert! db/db-spec :subscribers {:address "zlap@flap.com"})))
   (first (clojure.java.jdbc/insert! db/db-spec :subscribers {:address "zlap@flap.com"})))
-
+  
 (deftest subscribers
          (testing "creation"
                   (let [subscribers '({:address "flap@flap.com"} {:address "flap@gums.com"})

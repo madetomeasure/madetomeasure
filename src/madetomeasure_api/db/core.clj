@@ -4,14 +4,16 @@
     [clojure.string :as str]
     [environ.core :refer [env]]))
 
-
+; NOTE (cmhobbs) this function takes in a postgres adaptor URI in the
+;      form of:  jdbc:postgresql://hostname/dbname?user=username&password=pass
+;      and maps it to the standard format documented here:
+;      http://clojure-doc.org/articles/ecosystem/java_jdbc/home.html#setting-up-a-data-source
+;
+; FIXME (cmhobbs) cause this function to consume and return a canonical
+;       JDBC connection string in the form of:
+;       jdbc:postgresql://username:password@hostname/dbname 
 (def db-spec
-  "For some reason jdbc doesn't have a function to parse this url type
-  So this takes the databse-url and returns a given map that can be used
-  by Yesql:
-  JDBC takes the form of jdbc:vendor//host/dbname?user=name"
-  (let [connection-url (or (System/getenv "DATABASE_URL")
-                           (env :database-url))
+  (let [connection-url (env :database-url)
         parts (str/split connection-url #":")
         subprotocol (nth parts 1)
         subname (nth parts 2)]
