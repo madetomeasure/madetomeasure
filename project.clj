@@ -1,7 +1,7 @@
 (defproject madetomeasure-api "0.1.0-SNAPSHOT"
 
-            :description "FIXME: write description"
-            :url "http://example.com/FIXME"
+            :description "Made to Measure user-facing API"
+            :url "http://madetomeasure.io"
 
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [ring-server "0.4.0"]
@@ -43,6 +43,6 @@
          :destroy madetomeasure-api.handler/destroy
          :uberwar-name "madetomeasure-api.war"}
 
-  :clj-sql-up {:database "jdbc:postgresql://localhost/madetomeasure_development?user=matthewkirk"
-               :database-test "jdbc:postgresql://localhost/madetomeasure_test?user=matthewkirk"
+  :clj-sql-up {:database "jdbc:postgresql://dev:madetomeasure@localhost/madetomeasure_development"
+               :database-test "jdbc:postgresql://dev:madetomeasure@localhost/madetomeasure_test"
                :deps [[org.postgresql/postgresql "9.3-1102-jdbc41"]]})
