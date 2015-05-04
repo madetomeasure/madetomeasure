@@ -1,7 +1,7 @@
 (defproject madetomeasure-api "0.1.0-SNAPSHOT"
 
-            :description "FIXME: write description"
-            :url "http://example.com/FIXME"
+            :description "Made to Measure user-facing API"
+            :url "http://madetomeasure.io"
 
             :dependencies [[org.clojure/clojure "1.6.0"]
                            [ring-server "0.4.0"]
@@ -31,37 +31,19 @@
 
             :main madetomeasure-api.core
 
-            :plugins [[lein-ring "0.9.1"]
-                      [lein-environ "1.0.0"]
-                      [lein-ancient "0.6.5"]
-                      [clj-sql-up "0.3.7"]
-                      [lein-cljfmt "0.1.10"]]
+  :plugins [[lein-ring "0.9.1"]
+            [lein-environ "1.0.0"]
+            [lein-ancient "0.6.5"]
+            [clj-sql-up "0.3.7"]
+            [lein-cljfmt "0.1.10"]]
+  
+    :ring {:handler madetomeasure-api.handler/app
+         :init    madetomeasure-api.handler/init
+         :destroy madetomeasure-api.handler/destroy
+         :uberwar-name "madetomeasure-api.war"}
 
-
-            :ring {:handler madetomeasure-api.handler/app
-                   :init    madetomeasure-api.handler/init
-                   :destroy madetomeasure-api.handler/destroy
-                   :uberwar-name "madetomeasure-api.war"}
-
-            :clj-sql-up {:database "jdbc:postgresql://localhost/madetomeasure_development?user=matthewkirk"
-                         :database-test "jdbc:postgresql://localhost/madetomeasure_test?user=matthewkirk"
-                         :deps [[org.postgresql/postgresql "9.3-1102-jdbc41"]]}
-
-            :profiles
-            {:uberjar {:omit-source true
-                       :env {:production true}
-
-                       :aot :all}
-             :dev {:dependencies [[ring-mock "0.1.5"]
-                                  [ring/ring-devel "1.3.2"]
-                                  [pjstadig/humane-test-output "0.7.0"]
-                                  ]
-                   :source-paths ["env/dev/clj"]
-
-
-
-                   :repl-options {:init-ns madetomeasure-api.repl}
-                   :injections [(require 'pjstadig.humane-test-output)
-                                (pjstadig.humane-test-output/activate!)]
-                   :env {:dev true}}})
-
+  ; FIXME (cmhobbs) convert these to canonical JDBC connection strings in the
+  ;       following format:  jdbc:postgresql://username:password@hostname/dbname
+  :clj-sql-up {:database "jdbc:postgresql://localhost/madetomeasure_development?user=dev&password=madetomeasure"
+              :database-test "jdbc:postgresql://localhost/madetomeasure_test?user=dev&password=madetomeasure"
+              :deps [[org.postgresql/postgresql "9.3-1102-jdbc41"]]})
