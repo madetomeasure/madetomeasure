@@ -14,9 +14,6 @@
     },
     "first_name": { "type": "string", "maxLength": 255 },
     "last_name": {"type": "string", "maxLength": 255 },
-    "entity_name": {"type": "string", "maxLength": 255},
+    "entity_name": {"type": "string", "maxLength": 255}
   }
 }
-
-mailto:<Bob Dingus bob@dingus.com>
-First Last "Comment" user@example.com

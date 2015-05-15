@@ -5,14 +5,13 @@
              ; FIXME (cmhobbs) convert these to canonical JDBC connection strings in the
              ;       following format:  jdbc:postgresql://username:password@hostname/dbname
              :database-url "jdbc:postgresql://localhost/madetomeasure_development?user=dev&password=madetomeasure"             
+             :clj-env :development
              }
        :dependencies [[ring-mock "0.1.5"]
                       [ring/ring-devel "1.3.2"]
                       [pjstadig/humane-test-output "0.7.0"]
                       ]
        :source-paths ["env/dev/clj"]
-
-
 
        :repl-options {:init-ns madetomeasure-api.repl}
        :injections [(require 'pjstadig.humane-test-output)
@@ -22,8 +21,19 @@
  {
   ; FIXME (cmhobbs) convert these to canonical JDBC connection strings in the
   ;       following format:  jdbc:postgresql://username:password@hostname/dbname
-  :env {:database-url "jdbc:postgresql://localhost/madetomeasure?user=deploy"}
+  :env {
+        :database-url "jdbc:postgresql://localhost/madetomeasure?user=deploy"
+        :clj-env :production
+      }
   }
+ }
+ 
+ :test
+ {
+  :env {
+        :database-url "jdbc:postgresql://localhost/madetomeasure_test?user=dev&password=madetomeasure"
+        :clj-env :test
+      }
  }
 
 {

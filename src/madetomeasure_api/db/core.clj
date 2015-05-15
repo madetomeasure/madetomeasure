@@ -12,6 +12,7 @@
 ; FIXME (cmhobbs) cause this function to consume and return a canonical
 ;       JDBC connection string in the form of:
 ;       jdbc:postgresql://username:password@hostname/dbname 
+;
 (def db-spec
   (let [connection-url (env :database-url)
         parts (str/split connection-url #":")
