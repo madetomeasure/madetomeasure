@@ -26,16 +26,24 @@
 (defn get-subscribers []
   (str "Not implemented"))
 
+(defmacro execute
+  "Convenience macro for catching errors and fails"
+  [request execution]
+  (let [e (gensym 'e)
+        pretty-print (fn [ex] (.getMessage ex))
+        exceptions (gensym 'exceptions)]
+  `(try
+     ~execution
+   (catch SQLException ~e
+     (let [~exceptions (map ~pretty-print ~e)]
+       (present-response/fail ~exceptions (:params ~request)))))))
+
 (defn create-subscribers [request]
-  (let [subscribers (extract-subscribers request)]
-    ; TODO: Extract this into some sort of try catch for SQL calls
-    (try
-      (let [insertions (apply clojure.java.jdbc/insert! db/db-spec :subscribers subscribers)]
-        (present-response/success insertions))
-    (catch SQLException e 
-      (let [pretty-print (fn [e] (.getMessage e))
-            exceptions (map pretty-print e)]
-        (present-response/fail exceptions (:params request)))))))
+  (execute
+    request
+    (let [subscribers (extract-subscribers request)
+          insertions (apply clojure.java.jdbc/insert! db/db-spec :subscribers subscribers)]
+      (present-response/success insertions))))
 
 (defn get-subscriber [id]
   (str "Id: " id))
