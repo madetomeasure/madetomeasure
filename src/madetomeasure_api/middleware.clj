@@ -9,7 +9,7 @@
             [ring.middleware.session-timeout :refer [wrap-idle-session-timeout]]
             [noir-exception.core :refer [wrap-internal-error]]
             [ring.middleware.session.memory :refer [memory-store]]
-            [ring.middleware.format :refer [wrap-json-kw-params]]
+            [ring.middleware.format :refer [wrap-restful-format]]
             [buddy.auth.middleware :refer [wrap-authentication]]
             [buddy.auth.backends.session :refer [session-backend]]
             ))
@@ -29,7 +29,7 @@
 (defn production-middleware [handler]
   (-> handler
       (wrap-authentication (session-backend))
-      (wrap-json-kw-params)
+      (wrap-restful-format :formats [:json-kw])
       (wrap-idle-session-timeout
         {:timeout (* 60 30)
          :timeout-response (redirect "/")})

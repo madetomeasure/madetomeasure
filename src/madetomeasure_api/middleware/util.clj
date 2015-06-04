@@ -10,7 +10,7 @@
                                         (get-in req [:headers "content-type"])))]
       (and body (not (empty? (re-find regexp type)))))))
 
-(def ^:no-doc json-request?
+(def json-request?
   (make-type-request-pred #"^application/(vnd.+)?json"))
 
 
