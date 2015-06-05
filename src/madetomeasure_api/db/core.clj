@@ -13,10 +13,6 @@
 ;       JDBC connection string in the form of:
 ;       jdbc:postgresql://username:password@hostname/dbname 
 (def db-spec
-  (let [connection-url (env :database-url)
-        parts (str/split connection-url #":")
-        subprotocol (nth parts 1)
-        subname (nth parts 2)]
-    {:subprotocol subprotocol :subname subname}))
+  (env :database-url))
 
 (defqueries "sql/queries.sql" {:connection db-spec})
