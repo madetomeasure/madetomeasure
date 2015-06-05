@@ -3,9 +3,8 @@
             [madetomeasure-api.db.core :as db]
             [cheshire.core :refer :all]
             [compojure.core :refer [defroutes GET POST DELETE PATCH]]
-            [madetomeasure-api.middleware.present-response :refer :all :as present-response]
-            [madetomeasure-api.middleware.validate-json :refer [json-schema-validate]])
-  (:import java.sql.SQLException))
+            [madetomeasure-api.middleware.present-response :refer :all]
+            [madetomeasure-api.middleware.validate-json :refer [json-schema-validate]]))
 
 (def default-subscriber-map
   ^{:private true}
@@ -26,24 +25,12 @@
 (defn get-subscribers []
   (str "Not implemented"))
 
-(defmacro execute
-  "Convenience macro for catching errors and fails"
-  [request execution]
-  (let [e (gensym 'e)
-        pretty-print (fn [ex] (.getMessage ex))
-        exceptions (gensym 'exceptions)]
-  `(try
-     ~execution
-   (catch SQLException ~e
-     (let [~exceptions (map ~pretty-print ~e)]
-       (present-response/fail ~exceptions (:params ~request)))))))
-
 (defn create-subscribers [request]
   (execute
     request
     (let [subscribers (extract-subscribers request)
           insertions (apply clojure.java.jdbc/insert! db/db-spec :subscribers subscribers)]
-      (present-response/success insertions))))
+      (success insertions))))
 
 (defn get-subscriber [id]
   (str "Id: " id))
@@ -52,8 +39,8 @@
   (let [id (Integer/parseInt str-id)
         rows-deleted (db/delete-subscriber! {:id id})]
     (if (= 0 rows-deleted)
-      {:status 404, :body (present-response/fail {:id str-id} (str "Subscriber not found with id: " str-id))}
-      (present-response/success {:id str-id}))))
+      {:status 404, :body (fail {:id str-id} (str "Subscriber not found with id: " str-id))}
+      (success {:id str-id}))))
 
 (defn update-subscriber [id]
   (str "Id: " id))
