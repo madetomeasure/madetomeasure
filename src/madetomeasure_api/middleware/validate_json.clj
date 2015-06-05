@@ -1,7 +1,8 @@
 (ns madetomeasure-api.middleware.validate-json
   (:require [clojure.java.io :as io]
             [cheshire.core :refer :all]
-            [madetomeasure-api.middleware.present-response :as present-response :refer :all])
+            [madetomeasure-api.middleware.present-response :as present-response :refer :all]
+            [madetomeasure-api.middleware.util :as util :refer :all])
   (:import (com.github.fge.jsonschema.main JsonSchemaFactory JsonSchema)
            (com.fasterxml.jackson.databind ObjectMapper JsonMappingException)))
 
@@ -55,11 +56,13 @@
 
 (defn json-schema-validate [handler schema-name]
   (fn [request]
-    (let [body (:body request)
-          validation (validate schema-name body)
-          valid? (:success validation)
-          data (:params request)
-          errback (err-handler validation data)
-          h (if (not valid?) errback handler)
-          response (h request)]
-      response)))
+    (if (util/json-request? request)
+      (let [body (:body request)
+            validation (validate schema-name body)
+            valid? (:success validation)
+            data (:params request)
+            errback (err-handler validation data)
+            h (if (not valid?) errback handler)
+            response (h request)]
+        response)
+        request)))

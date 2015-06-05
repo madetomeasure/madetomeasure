@@ -1,5 +1,6 @@
 (ns madetomeasure-api.middleware.present-response
-  (:require [cheshire.core :refer :all]))
+  (:require [cheshire.core :refer :all])
+  (:import java.sql.SQLException))
 
 (defn- compact-map
   "This will compact the map by trimming all nil values"
@@ -26,3 +27,15 @@
   "All went well, and (usually) some data was returned."
   [data]
   (generate-string {:status "success" :data data}))
+
+(defmacro execute
+  "Convenience macro for catching errors and fails"
+  [request execution]
+  (let [e (gensym 'e)
+        pretty-print (fn [ex] (.getMessage ex))
+        exceptions (gensym 'exceptions)]
+  `(try
+     ~execution
+   (catch SQLException ~e
+     (let [~exceptions (map ~pretty-print ~e)]
+       (fail ~exceptions (:params ~request)))))))
